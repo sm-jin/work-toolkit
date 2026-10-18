@@ -1,0 +1,5 @@
+# 줄바꿈을 고정: 윈도우 .bat은 CRLF 그대로, 맥 스크립트는 LF 그대로 받는다
+* text=auto
+*.bat -text
+*.sh text eol=lf
+*.command text eol=lf

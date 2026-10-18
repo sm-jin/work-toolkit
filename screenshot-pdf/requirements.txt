@@ -1,0 +1,5 @@
+fastapi>=0.110
+uvicorn>=0.29
+pillow>=10.0
+img2pdf>=0.5
+pyobjc-framework-Quartz>=10.0; sys_platform == "darwin"

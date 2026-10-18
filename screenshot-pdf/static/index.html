@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Screenshot + PDF</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Screenshot + PDF</h1>
+    <div id="perms" class="badges"></div>
+  </header>
+
+  <div class="layout">
+    <section class="card screen-card">
+      <div class="toolbar">
+        <select id="display" title="모니터 선택"></select>
+        <select id="grab-delay" title="웹 화면을 캡처할 PC에서 직접 열었다면, 기다리는 동안 캡처할 창을 앞으로 가져오세요">
+          <option value="0">바로</option>
+          <option value="3">3초 뒤</option>
+          <option value="5">5초 뒤</option>
+        </select>
+        <button id="btn-refresh">화면 가져오기</button>
+        <div class="seg" role="radiogroup" aria-label="지정 모드">
+          <label><input type="radio" name="mode" value="region" checked> 캡처 영역</label>
+          <label><input type="radio" name="mode" value="point"> 다음 버튼 위치</label>
+        </div>
+        <span id="hint" class="muted">드래그해서 PDF 한 쪽이 될 영역을 지정하세요</span>
+      </div>
+      <div id="stage">
+        <img id="screen" alt="캡처 PC 화면">
+        <canvas id="overlay"></canvas>
+        <div id="stage-empty">
+          <strong>사용 순서</strong>
+          <ol>
+            <li>캡처할 PC(맥미니 또는 윈도우)에서 문서를 <b>첫 쪽</b>으로 띄워 둡니다. 로그인이 필요한 사이트는 직접 로그인합니다.</li>
+            <li>웹 화면을 같은 PC에서 열었다면 <b>3초 뒤</b>를 고르고, 그사이 캡처할 창을 앞으로 가져옵니다.</li>
+            <li><b>화면 가져오기</b>를 누르고 문서 영역을 드래그합니다.</li>
+            <li>페이지 넘김 방식을 고르고 <b>넘김 테스트</b>로 확인한 뒤, 뷰어를 첫 쪽으로 되돌립니다.</li>
+            <li>PDF 파일 이름과 저장 폴더를 정하고 <b>캡처 시작</b>. 끝나면 그 폴더에 PDF 하나로 저장되고, 아래 작업 목록에서도 받을 수 있습니다.</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <aside>
+      <section class="card">
+        <h2>1. 캡처 영역 <small id="coord-unit" class="muted"></small></h2>
+        <div class="grid4">
+          <label>X<input id="r_x" type="number"></label>
+          <label>Y<input id="r_y" type="number"></label>
+          <label>너비<input id="r_w" type="number" min="1"></label>
+          <label>높이<input id="r_h" type="number" min="1"></label>
+        </div>
+        <button id="btn-test-capture" class="block">테스트 캡처</button>
+      </section>
+
+      <section class="card">
+        <h2>2. 페이지 넘김</h2>
+        <label class="field">방식
+          <select id="next_mode">
+            <option value="key">키보드 키</option>
+            <option value="click">'다음' 버튼 클릭</option>
+          </select>
+        </label>
+        <label id="key-row" class="field">키
+          <select id="next_key">
+            <option value="right">→ 오른쪽 화살표</option>
+            <option value="down">↓ 아래 화살표</option>
+            <option value="pagedown">Page Down</option>
+            <option value="space">Space</option>
+            <option value="left">← 왼쪽 화살표</option>
+            <option value="up">↑ 위 화살표</option>
+            <option value="pageup">Page Up</option>
+            <option value="return">Return</option>
+          </select>
+        </label>
+        <p id="click-row" class="muted"><span id="point-info"></span></p>
+        <label class="field"><span>넘긴 뒤 대기 <small id="range-delay" class="muted"></small></span><input id="delay" type="number" step="0.1"></label>
+        <label class="check"><input id="focus_click" type="checkbox"> 시작할 때 영역을 한 번 클릭해 뷰어에 포커스</label>
+        <button id="btn-test-turn" class="block">넘김 테스트 <small>(실제로 한 쪽 넘어갑니다)</small></button>
+      </section>
+
+      <section class="card">
+        <h2>3. 실행</h2>
+        <label class="field">PDF 파일 이름<input id="title" type="text" maxlength="100" placeholder="예: 2026-10 이사회 자료"></label>
+        <div class="field-col">
+          <span>저장 폴더</span>
+          <div class="input-row">
+            <input id="output_dir" type="text" maxlength="1000" spellcheck="false" placeholder="비워 두면 앱 기본 폴더 (data/jobs)">
+            <button id="btn-pick-folder" type="button" title="캡처 PC 화면에 폴더 선택 창이 열립니다">찾아보기…</button>
+          </div>
+        </div>
+        <div id="name-preview" class="muted name-preview"></div>
+        <label class="field"><span>최대 쪽수 <small id="range-max_pages" class="muted"></small></span><input id="max_pages" type="number"></label>
+        <label class="field"><span>시작 전 대기 <small id="range-start_delay" class="muted"></small></span><input id="start_delay" type="number"></label>
+        <label class="field"><span class="check"><input id="ocr" type="checkbox"> OCR (PDF에서 글자 검색·복사)</span>
+          <select id="ocr_lang"></select>
+        </label>
+        <div class="row">
+          <button id="btn-start" class="primary">캡처 시작</button>
+          <button id="btn-stop" class="danger" disabled>중지</button>
+        </div>
+        <div class="status-box">
+          <div><span id="state" class="state">-</span> <span id="pages" class="muted"></span></div>
+          <div id="message" class="muted"></div>
+          <img id="last-thumb" alt="마지막으로 저장한 쪽" hidden>
+        </div>
+      </section>
+
+      <section id="preview-card" class="card" hidden>
+        <h2>미리보기</h2>
+        <div id="preview-caption" class="caption"></div>
+        <img id="preview" alt="미리보기">
+      </section>
+    </aside>
+  </div>
+
+  <section class="card jobs-card">
+    <div class="jobs-head">
+      <h2>작업 목록</h2>
+      <button id="btn-jobs-refresh" class="small">새로고침</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>제목</th><th>쪽수</th><th>상태</th><th>파일</th><th></th></tr></thead>
+        <tbody id="jobs-body"></tbody>
+      </table>
+    </div>
+    <details>
+      <summary class="muted">실행 로그</summary>
+      <pre id="log"></pre>
+    </details>
+  </section>
+
+  <div id="login" class="modal" hidden>
+    <form id="login-form" class="card">
+      <h2>접속 토큰</h2>
+      <p class="muted">서버 창(터미널)에 표시된 주소(토큰 포함)로 접속하거나, <code>data/token.txt</code>의 값을 입력하세요.</p>
+      <input id="login-token" type="password" autocomplete="off" placeholder="토큰">
+      <button class="primary block">접속</button>
+      <p id="login-error" class="error"></p>
+    </form>
+  </div>
+
+  <div id="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>
