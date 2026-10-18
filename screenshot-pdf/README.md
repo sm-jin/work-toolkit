@@ -21,13 +21,11 @@
 
 웹 화면도 같은 윈도우 PC의 브라우저에서 엽니다 (기본으로 그 PC에서만 접속됨).
 
-> 회사 PC라면 Python 설치에 IT 승인이 먼저 필요할 수 있습니다.
-
 ### 1-1. 설치 (처음 한 번)
 
 1. [Python 3](https://www.python.org/downloads/) 설치 — 설치 화면에서 **Add python.exe to PATH** 체크
    - 막 나온 최신 버전보다 한 단계 아래(예: 3.13, 3.14)를 권장합니다. 아주 최신 버전은 일부 패키지의 윈도우용 설치 파일이 늦게 나와 설치가 실패할 수 있습니다.
-2. 코드 받기 (Private 저장소라 처음 한 번 GitHub 로그인이 필요합니다):
+2. 코드 받기:
    ```bat
    git clone https://github.com/sm-jin/work-toolkit.git
    ```
@@ -68,7 +66,7 @@
 
 ### 2-1. 설치 (처음 한 번)
 
-1. 코드 받기 (Private 저장소라 처음 한 번 GitHub 로그인이 필요합니다):
+1. 코드 받기:
    ```bash
    git clone https://github.com/sm-jin/work-toolkit.git ~/work-toolkit
    ```
@@ -168,7 +166,6 @@
   직접 정한 저장 폴더의 PDF는 남습니다. 맥미니에는 FileVault를 켜 두세요.
 - **iCloud Drive·Dropbox·OneDrive 같은 동기화 폴더**를 저장 폴더로 고르면 PDF가 클라우드에 올라갑니다.
   맥에서 *데스크탑 및 문서 폴더 iCloud 동기화*를 켜 두었다면 `~/Documents`, `~/Desktop`도 해당됩니다.
-- 회사 문서라면 정보보안 규정이 로컬 사본 보관을 허용하는지 미리 확인하세요.
 
 ---
 
